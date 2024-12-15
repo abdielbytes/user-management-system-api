@@ -50,18 +50,9 @@ class UserController extends Controller
 
 
     // Show specific user
-    public function show(Request $request)
+    public function show($id)
     {
         try {
-            $id = $request->query('id');
-
-            if (!$id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User ID is required',
-                ], 422);
-            }
-
             $user = User::find($id);
 
             if (!$user) {
@@ -71,7 +62,6 @@ class UserController extends Controller
                 ], 404);
             }
 
-            // Allow viewing only by the user themselves or an admin
             $authUser = Auth::user();
             if ($authUser->id !== $user->id && $authUser->role !== 'admin') {
                 return response()->json([
@@ -86,7 +76,7 @@ class UserController extends Controller
                 'user' => $user,
             ]);
         } catch (\Exception $e) {
-            Log::error('Error fetching user: ' . $e->getMessage());
+            Log::error('Error fetching user', ['id' => $id, 'user' => Auth::user(), 'error' => $e->getMessage()]);
 
             return response()->json([
                 'success' => false,
@@ -95,12 +85,11 @@ class UserController extends Controller
         }
     }
 
+
     // Delete account
-    public function delete(Request $request)
+    public function delete($id)
     {
         try {
-            $id = $request->query('id');
-
             if (!$id) {
                 return response()->json([
                     'success' => false,
@@ -142,11 +131,9 @@ class UserController extends Controller
     }
 
     // Update user account
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
         try {
-            $id = $request->query('id');
-
             if (!$id) {
                 return response()->json([
                     'success' => false,

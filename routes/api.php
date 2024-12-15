@@ -15,11 +15,9 @@ Route::prefix('auth')->group(function(){
 });
 
 
-//Route::middleware(['auth:api'])->group(function(){
-//       Route::resource('users', UserController::class);
-//});
-
-
 Route::middleware('auth:api')->group(function () {
     Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{id}', [UserController::class, 'show']);
+    Route::delete('/users/{id}', [UserController::class, 'delete']);
+    Route::put('/users/{id}', [UserController::class, 'update']);
 });
