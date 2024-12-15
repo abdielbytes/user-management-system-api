@@ -107,7 +107,7 @@ class UserController extends Controller
             }
 
             $authUser = Auth::user();
-            if ($authUser->id !== $user->id && $authUser->role !== 'admin') {
+            if ($authUser->role !== 'admin') {
                 return response()->json([
                     'success' => false,
                     'message' => 'Unauthorized to delete this account',
