@@ -1,188 +1,52 @@
-# User Management API Documentation.
-The provided code defines an API for user management in Laravel, specifically handling authentication and user data operations. Here’s a breakdown of the API endpoints and their functionality:
+# User Management API
 
-### 1. **Public Routes:**
-These routes do not require authentication and allow users to register, log in, and log out.
+This project provides an API for user management in Laravel, offering authentication and user data operations.
 
-- **POST `/register`**:
-    - Registers a new user.
-    - **Controller**: `AuthController@register`.
+## Setup Instructions
 
-- **POST `/login`**:
-    - Logs in an existing user and generates an access token.
-    - **Controller**: `AuthController@login`.
+1. Clone the repository:
+   ```bash
+   git clone <repo link>
+   ```
 
-- **POST `/logout`**:
-    - Logs the user out by invalidating their current token.
-    - **Controller**: `AuthController@logout`.
-    - **Middleware**: `auth:api` — ensures the user must be authenticated.
+2. Navigate to the project directory and install dependencies:
+   ```bash
+   cd <project-directory>
+   composer install
+   ```
 
-### 2. **Authenticated Routes:**
-These routes are protected by `auth:api` middleware, meaning the user must be authenticated with a valid token to access them.
+3. Set up the database:
+    - Update your `.env` file with the correct database configuration.
+    - Run the following command to migrate the database and seed initial data:
+      ```bash
+      php artisan migrate:fresh --seed
+      ```
 
-- **GET `/user`**:
-    - Returns the authenticated user’s information.
-    - **Middleware**: `auth:api` — requires the user to be authenticated with an API token.
+4. Generate a personal access token for Laravel Passport:
+   ```bash
+   php artisan passport:client --personal
+   ```
 
-- **GET `/users`**:
-    - Returns a list of all users.
-    - **Controller**: `UserController@index`.
+5. Start the server:
+   ```bash
+   php artisan serve
+   ```
 
-- **GET `/users/{id}`**:
-    - Returns a specific user by ID.
-    - **Controller**: `UserController@show`.
+## Running Tests
 
-- **DELETE `/users/{id}`**:
-    - Deletes a specific user by ID.
-    - **Controller**: `UserController@delete`.
+To execute the test suite, run:
+```bash
+php artisan test
+```
 
-- **PUT `/users/{id}`**:
-    - Updates a specific user's information.
-    - **Controller**: `UserController@update`.
+## Documentation
 
+For detailed API documentation, please refer to the [API Documentation](<http://127.0.0.1:8000/docs/api>).
+(http://127.0.0.1:8000/docs/api)
 ---
 
-### Example Request/Response
+### Notes
 
-#### **1. Register User**
-- **URL**: `/register`
-- **Method**: `POST`
-- **Request Body**:
-  ```json
-  {
-      "name": "John Doe",
-      "email": "john@example.com",
-      "password": "password"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-      "message": "User registered successfully",
-      "user": {
-          "id": 1,
-          "name": "John Doe",
-          "email": "john@example.com",
-          "email_verified_at": null,
-          "created_at": "2024-12-15T00:00:00.000000Z",
-          "updated_at": "2024-12-15T00:00:00.000000Z"
-      }
-  }
-  ```
+- Ensure the database is configured and running before starting the server.
+- Use the personal access token generated during setup to authenticate protected routes.
 
-#### **2. Login User**
-- **URL**: `/login`
-- **Method**: `POST`
-- **Request Body**:
-  ```json
-  {
-      "email": "john@example.com",
-      "password": "password"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-      "access_token": "your-jwt-token",
-      "token_type": "bearer",
-      "expires_in": 3600
-  }
-  ```
-
-#### **3. Logout User**
-- **URL**: `/logout`
-- **Method**: `POST`
-- **Request Header**: `Authorization: Bearer your-jwt-token`
-- **Response**:
-  ```json
-  {
-      "message": "Successfully logged out",
-      "success": true
-  }
-  ```
-
-#### **4. Get List of Users (Authenticated)**
-- **URL**: `/users`
-- **Method**: `GET`
-- **Request Header**: `Authorization: Bearer your-jwt-token`
-- **Response**:
-  ```json
-  [
-      {
-          "id": 1,
-          "name": "John Doe",
-          "email": "john@example.com",
-          "created_at": "2024-12-15T00:00:00.000000Z",
-          "updated_at": "2024-12-15T00:00:00.000000Z"
-      },
-      {
-          "id": 2,
-          "name": "Jane Doe",
-          "email": "jane@example.com",
-          "created_at": "2024-12-15T00:00:00.000000Z",
-          "updated_at": "2024-12-15T00:00:00.000000Z"
-      }
-  ]
-  ```
-
-#### **5. Get Specific User**
-- **URL**: `/users/{id}`
-- **Method**: `GET`
-- **Request Header**: `Authorization: Bearer your-jwt-token`
-- **Response**:
-  ```json
-  {
-      "id": 1,
-      "name": "John Doe",
-      "email": "john@example.com",
-      "email_verified_at": null,
-      "created_at": "2024-12-15T00:00:00.000000Z",
-      "updated_at": "2024-12-15T00:00:00.000000Z"
-  }
-  ```
-
-#### **6. Update User**
-- **URL**: `/users/{id}`
-- **Method**: `PUT`
-- **Request Header**: `Authorization: Bearer your-jwt-token`
-- **Request Body**:
-  ```json
-  {
-      "name": "Updated Name",
-      "email": "updated-email@example.com"
-  }
-  ```
-- **Response**:
-  ```json
-  {
-      "message": "User updated successfully",
-      "user": {
-          "id": 1,
-          "name": "Updated Name",
-          "email": "updated-email@example.com",
-          "created_at": "2024-12-15T00:00:00.000000Z",
-          "updated_at": "2024-12-15T00:00:00.000000Z"
-      }
-  }
-  ```
-
-#### **7. Delete User**
-- **URL**: `/users/{id}`
-- **Method**: `DELETE`
-- **Request Header**: `Authorization: Bearer your-jwt-token`
-- **Response**:
-  ```json
-  {
-      "message": "User deleted successfully",
-      "success": true
-  }
-  ```
-
----
-
-### Notes:
-- The `auth:api` middleware ensures that all routes except for `register`, `login`, and `logout` are accessible only to authenticated users.
-- The JWT access token is required for the routes that are protected by `auth:api`.
-- The `UserController` should handle the logic for the `index`, `show`, `delete`, and `update` actions.
-
-This API provides basic user management functionality, including registration, authentication, and CRUD operations for users.
